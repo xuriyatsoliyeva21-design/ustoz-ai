@@ -110,7 +110,7 @@ function openSubject(subject) {
     el('p', 'Bu fan bo‘yicha dars mavzulari va materiallar shu yerda ko‘rsatiladi.')
   );
 }
-
+function renderSection(section='home') {
 const root=$('dashContent');root.replaceChildren();
 document.querySelectorAll('[data-section]').forEach(b=>b.classList.toggle('active',b.dataset.section===section));
 const name=currentProfile?.fullName||currentUser?.displayName||'O‘quvchi';
