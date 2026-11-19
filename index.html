@@ -73,8 +73,44 @@ await showAccount(cred.user);
 }catch(err){let t={'auth/email-already-in-use':'Bu email allaqachon ro‘yxatdan o‘tgan.','auth/invalid-email':'Email manzili noto‘g‘ri.','auth/weak-password':'Parol juda qisqa.','auth/invalid-credential':'Email yoki parol noto‘g‘ri.','auth/operation-not-allowed':'Firebase Authentication bo‘limida Email/Password usulini yoqing.','permission-denied':'Firestore ruxsatlari yetarli emas.'}[err.code]||err.message;message(t,true)}finally{btn.disabled=false}
 };
 function el(tag,text,cls){const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(cls)node.className=cls;return node}
-function tile(title,desc){const item=el('div',undefined,'tile');item.append(el('h3',title),el('p',desc));return item}
-function renderSection(section='home'){
+
+function tile(title, desc) {
+  const item = el('div', undefined, 'tile');
+  item.append(el('h3', title), el('p', desc));
+
+  if (desc.includes('Namunaviy fan')) {
+    item.style.cursor = 'pointer';
+    item.tabIndex = 0;
+    item.setAttribute('role', 'button');
+
+    const open = () => openSubject(title.replace(/^📘\s*/, ''));
+
+    item.onclick = open;
+    item.onkeydown = e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        open();
+      }
+    };
+  }
+
+  return item;
+}
+
+function openSubject(subject) {
+  const root = $('dashContent');
+  root.replaceChildren();
+
+  const back = el('button', '← Darslarimga qaytish');
+  back.onclick = () => renderSection('lessons');
+
+  root.append(
+    back,
+    el('h2', subject),
+    el('p', 'Bu fan bo‘yicha dars mavzulari va materiallar shu yerda ko‘rsatiladi.')
+  );
+}
+
 const root=$('dashContent');root.replaceChildren();
 document.querySelectorAll('[data-section]').forEach(b=>b.classList.toggle('active',b.dataset.section===section));
 const name=currentProfile?.fullName||currentUser?.displayName||'O‘quvchi';
