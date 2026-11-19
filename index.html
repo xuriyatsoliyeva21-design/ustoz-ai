@@ -31,12 +31,12 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/fireba
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 const firebaseConfig = {
-  apiKey: 'AIzaSyD4OwDR0TuF0f4GhVwmrziKvUKlS6wTU',
-  authDomain: 'ustoz-ai-d47b9.firebaseapp.com',
-  projectId: 'ustoz-ai-d47b9',
-  storageBucket: 'ustoz-ai-d47b9.firebasestorage.app',
-  messagingSenderId: '91646142933',
-  appId: '1:91646142933:web:8283cc521ae76ed270b55c'
+  apiKey: "AIzaSyD4OwDROTuFOf4GhVWwmrziKvUKU1S6wTU",
+  authDomain: "ustoz-ai-d47b9.firebaseapp.com",
+  projectId: "ustoz-ai-d47b9",
+  storageBucket: "ustoz-ai-d47b9.firebasestorage.app",
+  messagingSenderId: "91646142933",
+  appId: "1:91646142933:web:8283cc521ae76ed270b55c"
 };
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const $=id=>document.getElementById(id);
