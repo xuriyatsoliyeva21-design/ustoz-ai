@@ -1,53 +1,69 @@
-
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>USTOZ AI — 27-maktab</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #eef4ff;
-      text-align: center;
-      padding: 50px 15px;
-    }
-    h1 { color: #1d4ed8; }
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      max-width: 550px;
-      margin: auto;
-      box-shadow: 0 4px 15px #0002;
-    }
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>USTOZ AI — 27-maktab</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#edf3ff;color:#18243b}.wrap{max-width:480px;margin:55px auto;padding:15px}.panel{background:white;border-radius:18px;padding:30px;box-shadow:0 8px 25px #17336b19}h1{color:#2454d6;text-align:center;margin:0}h2{text-align:center;font-size:20px}p{text-align:center;color:#526078}label{display:block;font-weight:600;margin:15px 0 6px}input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:9px;font-size:15px}button{padding:12px 16px;border:0;border-radius:9px;background:#2454d6;color:white;cursor:pointer;font-size:15px}button:disabled{opacity:.55;cursor:wait}.primary{width:100%;margin-top:18px}.tabs{display:flex;gap:8px;margin-top:22px}.tabs button{flex:1}.tabs .inactive{background:#e8edfa;color:#2454d6}.link{background:none;color:#2454d6;padding:8px}.center{text-align:center}.hide{display:none}#message{margin-top:16px;white-space:pre-wrap;text-align:center;font-size:14px}.error{color:#b42318}.success{color:#16713b}.hint{font-size:12px;color:#69778c;text-align:left}
+</style>
 </head>
-<body>
-  <div class="card">
-    <h1>USTOZ AI</h1>
-    <h2>27-maktab ta'lim platformasi</h2>
-    <p>O'qituvchi va o'quvchilar uchun
-       zamonaviy raqamli ta'lim tizimi.</p>
-    <p>Platformamizga xush kelibsiz!</p>
-    
-<div style="margin-top:25px;">
-  <h3>Tizimga kirish</h3>
-
-  <button onclick="alert('Administrator kirish tizimi tayyorlanmoqda')">
-    Administrator
-  </button>
-
-  <button onclick="alert('O‘qituvchi kirish tizimi tayyorlanmoqda')">
-    O‘qituvchi
-  </button>
-
-  <button onclick="alert('O‘quvchi kirish tizimi tayyorlanmoqda')">
-    O‘quvchi
-  </button>
+<body><div class="wrap"><div class="panel">
+<h1>USTOZ AI</h1><h2>27-maktab ta'lim platformasi</h2><p>O‘qituvchi va o‘quvchilar uchun raqamli ta'lim tizimi</p>
+<div id="guest">
+<div class="tabs"><button id="loginTab" type="button">Kirish</button><button id="signupTab" type="button" class="inactive">Ro‘yxatdan o‘tish</button></div>
+<form id="authForm">
+<div id="signupFields" class="hide">
+<label for="fullName">Ism va familiya</label><input id="fullName" autocomplete="name" maxlength="100">
+<label for="role">Kim sifatida ro‘yxatdan o‘tasiz?</label><select id="role"><option value="student">O‘quvchi</option><option value="teacher">O‘qituvchi</option></select>
+<div id="classBox"><label for="schoolClass">Sinf</label><select id="schoolClass"><option value="">Sinfni tanlang</option></select></div>
 </div>
-
-  </div>
-</body>
-</html>
-
+<label for="email">Email</label><input id="email" type="email" autocomplete="email" required>
+<label for="password">Parol</label><input id="password" type="password" minlength="6" autocomplete="current-password" required>
+<p class="hint" id="passwordHint">Parolingizni kiriting.</p>
+<button class="primary" id="submitBtn" type="submit">Tizimga kirish</button>
+</form>
+</div>
+<div id="profile" class="hide center"><h2>Xush kelibsiz!</h2><p id="profileText"></p><button id="logoutBtn">Chiqish</button></div>
+<div id="message" role="status" aria-live="polite"></div>
+</div></div>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+const firebaseConfig = {
+  apiKey: 'AIzaSyD4OwDR0TuF0f4GhVwmrziKvUKlS6wTU',
+  authDomain: 'ustoz-ai-d47b9.firebaseapp.com',
+  projectId: 'ustoz-ai-d47b9',
+  storageBucket: 'ustoz-ai-d47b9.firebasestorage.app',
+  messagingSenderId: '91646142933',
+  appId: '1:91646142933:web:8283cc521ae76ed270b55c'
+};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const $=id=>document.getElementById(id);
+let signup=false;
+function message(t,error=false){$('message').textContent=t;$('message').className=error?'error':'success'}
+function setMode(v){signup=v;$('signupFields').classList.toggle('hide',!v);$('loginTab').classList.toggle('inactive',v);$('signupTab').classList.toggle('inactive',!v);$('submitBtn').textContent=v?'Ro‘yxatdan o‘tish':'Tizimga kirish';$('password').autocomplete=v?'new-password':'current-password';$('passwordHint').textContent=v?'Kamida 6 belgili parol yarating.':'Parolingizni kiriting.';message('')}
+$('loginTab').onclick=()=>setMode(false);$('signupTab').onclick=()=>setMode(true);
+for(let i=1;i<=11;i++)for(const letter of ['A','B','D']){let o=document.createElement('option');o.value=`${i}-${letter}`;o.textContent=`${i}-${letter}`;$('schoolClass').append(o)}
+$('role').onchange=()=>$('classBox').classList.toggle('hide',$('role').value!=='student');
+$('authForm').onsubmit=async e=>{
+e.preventDefault();const btn=$('submitBtn');btn.disabled=true;message('');
+try{
+const email=$('email').value.trim(),password=$('password').value;
+if(signup){
+const fullName=$('fullName').value.trim(),role=$('role').value,schoolClass=role==='student'?$('schoolClass').value:null;
+if(!fullName)throw new Error('Ism va familiyani kiriting.');
+if(role==='student'&&!schoolClass)throw new Error('Sinfni tanlang.');
+const cred=await createUserWithEmailAndPassword(auth,email,password);
+await updateProfile(cred.user,{displayName:fullName});
+await setDoc(doc(db,'users',cred.user.uid),{fullName,email,role,schoolId:'school-27',...(schoolClass?{schoolClass}:{})});
+message('Ro‘yxatdan muvaffaqiyatli o‘tdingiz!');
+}else{await signInWithEmailAndPassword(auth,email,password);message('Tizimga kirdingiz.');}
+}catch(err){let t={'auth/email-already-in-use':'Bu email allaqachon ro‘yxatdan o‘tgan.','auth/invalid-email':'Email manzili noto‘g‘ri.','auth/weak-password':'Parol juda qisqa.','auth/invalid-credential':'Email yoki parol noto‘g‘ri.','auth/operation-not-allowed':'Firebase Authentication bo‘limida Email/Password usulini yoqing.','permission-denied':'Firestore ruxsatlari yetarli emas.'}[err.code]||err.message;message(t,true)}finally{btn.disabled=false}
+};
+onAuthStateChanged(auth,async user=>{
+$('guest').classList.toggle('hide',!!user);$('profile').classList.toggle('hide',!user);
+if(user){try{const snap=await getDoc(doc(db,'users',user.uid));const data=snap.exists()?snap.data():null;$('profileText').textContent=`${data?.fullName||user.displayName||user.email}\n${data?.role==='teacher'?'O‘qituvchi':data?.role==='student'?'O‘quvchi':data?.role==='admin'?'Administrator':'Profil ma’lumoti topilmadi'}${data?.schoolClass?' — '+data.schoolClass:''}`;}catch(err){$('profileText').textContent=user.email;message('Profil ma’lumotini o‘qib bo‘lmadi: '+err.message,true)}}
+});
+$('logoutBtn').onclick=()=>signOut(auth).catch(e=>message(e.message,true));
+</script></body></html>
